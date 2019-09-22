@@ -1,0 +1,89 @@
+name: $(ModuleName)-$(ModuleVersion)
+
+variables:
+- name: ModuleName
+  value: DevOpsAgentServerCore
+- name: ModuleVersion
+  value: 1.0
+- group: vg.DevOpsAgent
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+    - Agents/Docker/Windows/ServerCore/*
+
+stages:
+- stage: BuildPush
+  jobs:
+  - job: 'BuildImage'
+    displayName: Build and Push Docker Container Image
+    pool:
+      vmImage: $(vmImageWindows)
+    workspace:
+      clean: all
+    steps:
+      - task: PowerShell@2
+        enabled: true
+        inputs:
+          targetType: 'inline'
+          script: |
+            $ACR_NAME = "$(acrName)"
+            $ACR_KEY = "$(acrKey)"
+            $ACR_URL = "$ACR_NAME.azurecr.io"
+
+            docker login "$ACR_URL" -u "$ACR_NAME" -p "$ACR_KEY"
+            #Write-Host $ACR_KEY | docker login "$ACR_URL" --username "$ACR_NAME" --password-stdin
+            docker build --rm -f "Agents/Docker/Windows/ServerCore/dockerfile" -t adoagent_servercore:latest .
+            docker tag adoagent_servercore "$ACR_URL/ado/adoagent_servercore"
+            docker push "$ACR_URL/ado/adoagent_servercore"
+- stage: Deploy
+  jobs:
+  - job: 'Deploy'
+    displayName: Deploy Docker Container
+    pool:
+      vmImage: $(vmImageWindows)
+    workspace:
+      clean: all
+    steps:
+      - task: AzurePowerShell@4
+        displayName: 'Start Docker Container'
+        inputs:
+          azureSubscription: $(ServiceConnection)
+          ScriptType: InlineScript
+          Inline: |
+            New-AzResourceGroup -Name "$(resourceGroup)" -Location "$(location)" -force
+            $RegistryName = "$(acrName)"
+            $RegistryKey = "$(acrKey)"
+            $agentCount = "$(agentCount)"
+            $containerNamePrefix = "$(containerNamePrefix)" + "servercore"
+            $resourceGroup = "$(resourceGroup)"
+            $image = "$RegistryName" + ".azurecr.io/ado/adoagent_servercore:latest"
+
+            $RegistryCredentials= New-Object System.Management.Automation.PSCredential ("$RegistryName", (ConvertTo-SecureString "$RegistryKey" -AsPlainText -Force))
+            $container= @()
+            $envVars = @{
+            "AZP_URL"="$(adoUrl)";
+            "AZP_TOKEN"="$(agentPoolToken)";
+            "AZP_POOL"="$(agentPool)"}
+
+            for ($i=1; $i -le $agentCount; $i++) {
+                $containerName = $containerNamePrefix + "00$i"
+                Write-Output "Creating container $containerName ..."
+                $envVars["AZP_AGENT_NAME"] = $containerName
+                New-AzContainerGroup `
+                    -ResourceGroupName $resourceGroup `
+                    -Name "$containerName" `
+                    -Image "$image" `
+                    -RegistryCredential $RegistryCredentials `
+                    -Cpu 1 `
+                    -MemoryInGB 4 `
+                    -OsType Windows `
+                    -RestartPolicy OnFailure `
+                    -EnvironmentVariable $envVars
+                $container += "$containerName"
+            }
+            Write-Output $container
+          azurePowerShellVersion: LatestVersion
