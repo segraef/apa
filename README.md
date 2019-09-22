@@ -10,9 +10,12 @@ I'll be brief. The following explains how to build, setup and run self-hosted do
 ## Container Agents
 The docker container are based on the official [Azure Pipelines VM images for Microsoft-hosted CI/CD](https://github.com/microsoft/azure-pipelines-image-generation).
 
-- [Ubuntu](Agents/Docker/Linux/Ubuntu) (latest)
-- [Debian](Agents/Docker/Linux/Debian) (latest)
-- [Server Core](Agents/Docker/Windows/ServerCore) (latest)
+
+| Container Agent | Build Status  |
+|---|---|---|---|---|
+| [Ubuntu](Docker/Linux/Ubuntu/readme.md) (latest)   | [![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentUbuntu?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)  |
+| [Debian](Docker/Linux/Debian/readme.md) (latest)  | [![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentDebian?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
+|  [Server Core](Docker/Windows/ServerCore/readme.md) (latest) | [![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentServerCore?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
 
 ## Requirements
 
@@ -38,14 +41,15 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
     adoUrl = https://dev.azure.com/<your_org> # Azure DevOps Organization URL
     agentCount = 3 # amount of azure pipeline container instances to be created
     agentPool = Self-Hosted # agent-pool name
-    agentPoolToken = <acrKey>
-    containerNamePrefix = apa
+    agentPoolToken = <acrKey> # personal acces token for agent pool
+    containerNamePrefix = apa # container name prefix
     location = westeurope  # where your resources will be created
     resourceGroup = apa-rg # where your agents will be placed
     serviceConnection = <serviceConnection> # arm service connection name
     vmImageLinux = ubuntu-latest # vm poolimage for linux containers
     vmImageWindows = windows-latest # vm poolimage for linux containers
     ```
+
 4. Create a new pipeline using one of the following pipeline.yaml for [Ubuntu](Agents\Docker\Linux\Ubuntu\Pipeline\pipeline.yaml), for [Debian](Agents\Docker\Linux\Debian\Pipeline\pipeline.yaml) or for [Server Core](Agents\Docker\Linux\Debian\Pipeline\pipeline.yaml) and run it.
 
 ## Helpers
