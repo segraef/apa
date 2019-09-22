@@ -26,7 +26,7 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
 ## Setup
 
-1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) and clone/for this repo into it.
+1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) and clone/for [this repo](https://github.com/segraef/apa.git) into it.
 
 2. Generate a [Personal Access Token (PAT)](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops#create-personal-access-tokens-to-authenticate-access) for your Azure DevOps Organization. When generating the Personal Access Token (PAT), assign the following scopes:
 
@@ -50,7 +50,7 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
     vmImageWindows      = windows-latest    # vm poolimage for linux containers
     ```
 
-4. Create a new pipeline using one of the following pipeline.yaml for [Ubuntu](Agents\Docker\Linux\Ubuntu\Pipeline\pipeline.yaml), for [Debian](Agents\Docker\Linux\Debian\Pipeline\pipeline.yaml) or for [Server Core](Agents\Docker\Linux\Debian\Pipeline\pipeline.yaml) and run it.
+4. Create a new pipeline using one of the following pipeline.yaml for [Ubuntu](Agents/Docker/Linux/Ubuntu/Pipeline/pipeline.yaml), for [Debian](Agents/Docker/Linux/Debian/Pipeline/pipeline.yaml) or for [Server Core](Agents/Docker/Linux/Debian/Pipeline/pipeline.yaml) and run it.
 
 ## Helpers
 
