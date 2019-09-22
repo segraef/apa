@@ -37,11 +37,11 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
     ```
     acrKey              = <acrKey>          # azure container registry key to login
-    acrName             = <acrKey>          # azure container registry name
+    acrName             = <acrName>         # azure container registry name
     adoUrl              = https://dev.azure.com/<your_org> # Azure DevOps Organization URL
     agentCount          = 3                 # amount of azure pipeline container instances to be created
     agentPool           = Self-Hosted       # agent-pool name
-    agentPoolToken      = <acrKey>          # personal acces token for agent pool
+    agentPoolToken      = <agentPoolToken>  # personal acces token for agent pool
     containerNamePrefix = apa               # container name prefix
     location            = westeurope        # where your resources will be created
     resourceGroup       = apa-rg            # where your agents will be placed
