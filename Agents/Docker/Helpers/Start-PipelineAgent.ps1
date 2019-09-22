@@ -43,20 +43,11 @@ for ($i=1; $i -le $agentCount; $i++) {
         -Name "$containerName" `
         -Image "$imageLinux" `
         -RegistryCredential $RegistryCredentials `
-        -Cpu 2 `
-        -MemoryInGB 8 `
+        -Cpu 1 `
+        -MemoryInGB 4 `
         -OsType $osType `
         -RestartPolicy OnFailure `
         -EnvironmentVariable $envVars
     $container += "$containerName"
 }
 Write-Output $container
-
-#Assign Managed Identities to new containers
-
-#Install-Module -Name PowerShellGet -AllowPrerelease
-#Install-Module -Name Az.ManagedServiceIdentity -AllowPrerelease
-
-#docker run -it -e ADO_URL=$ADO_URL -e ADO_TOKEN=$ADO_TOKEN -e ADO_POOL=$ADO_POOL devopsagent_ubuntu:latest
-#docker run -e AZP_URL=$ADO_URL -e AZP_TOKEN=$ADO_TOKEN -e AZP_POOL=$ADO_POOL adoagent_ubuntu:latest
-
