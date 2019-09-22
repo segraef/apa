@@ -4,23 +4,22 @@ $ADO_TOKEN = Read-Host "Azure DevOps Personal Access Token: "
 
 $ADO_POOL = Read-Host "Azure DevOps Agent Pool Name (Default: Self-Hosted): "
 if (!$ADO_POOL) {$ADO_POOL = 'Self-Hosted'}
-$location = Read-Host "Location: (Default: )"
+$location = Read-Host "Location: (Default: West Europe )"
 if (!$location) {$location = 'West Europe'}
-$resourceGroup = Read-Host "Resource Group Name: (Default: vdc-devopsagents-rg)"
+$resourceGroup = Read-Host "Resource Group Name: (Default: apa-rg)"
 if (!$resourceGroup) {$resourceGroup = 'vdc-devopsagents-rg'}
-$containerNamePrefix = Read-Host "Containername Prefix (Default: vdc-adoagent): "
-if (!$containerNamePrefix) {$containerNamePrefix = 'vdc-adoagent'}
+$containerNamePrefix = Read-Host "Containername Prefix (Default: apa): "
+if (!$containerNamePrefix) {$containerNamePrefix = 'apa'}
 $agentCount = Read-Host "Container Count (Default: 3): "
 if (!$agentCount) {$agentCount = '3'}
 $osContainer = Read-Host "Container Operating System (Debian, Ubuntu or ServerCore, Default: Ubuntu): "
-if (!$osContainer) {$osContainer = 'Linux'}
+if (!$osContainer) {$osContainer = 'Ubuntu'}
 $osContainer = $osContainer.ToLower()
 $osType = switch ($osContainer) {
     'debian' {'linux'}
     'ubuntu' {'linux'}
     'servercore' {'linux'}    
 }
-
 
 $RegistryName = Read-Host "Azure Container Registry Name: "
 $RegistryKey = Read-Host "Azure Container Registry Key: "
@@ -55,8 +54,8 @@ Write-Output $container
 
 #Assign Managed Identities to new containers
 
-Install-Module -Name PowerShellGet -AllowPrerelease
-Install-Module -Name Az.ManagedServiceIdentity -AllowPrerelease
+#Install-Module -Name PowerShellGet -AllowPrerelease
+#Install-Module -Name Az.ManagedServiceIdentity -AllowPrerelease
 
 #docker run -it -e ADO_URL=$ADO_URL -e ADO_TOKEN=$ADO_TOKEN -e ADO_POOL=$ADO_POOL devopsagent_ubuntu:latest
 #docker run -e AZP_URL=$ADO_URL -e AZP_TOKEN=$ADO_TOKEN -e AZP_POOL=$ADO_POOL adoagent_ubuntu:latest
