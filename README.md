@@ -5,7 +5,7 @@ I'll be brief. The following explains how to build, setup and run self-hosted do
 1. Build Docker Container Image for self-hosted Azure Pipelines Agent.
 2. Push Docker Container Image to Azure Container Registry.
 3. Start Docker Container as Azure Container Instance.
-4. Connect Container to Azure DevOps Agent Pool (Self-Hosted).
+4. Connect Docker Container to Azure DevOps Agent Pool (Self-Hosted).
 
 ## Container Agents
 The docker container are based on the official [Azure Pipelines VM images for Microsoft-hosted CI/CD](https://github.com/microsoft/azure-pipelines-image-generation).
