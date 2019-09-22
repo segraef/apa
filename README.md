@@ -12,7 +12,7 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
 
 | Container Agent | Build Status  |
-|---|---|---|---|---|
+|---|---|
 | [Ubuntu](Docker/Linux/Ubuntu/readme.md) (latest)   | [![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentUbuntu?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)  |
 | [Debian](Docker/Linux/Debian/readme.md) (latest)  | [![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentDebian?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
 |  [Server Core](Docker/Windows/ServerCore/readme.md) (latest) | [![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentServerCore?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
