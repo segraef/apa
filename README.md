@@ -36,18 +36,18 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 3. In pipeline/library add a variable group named vg.DevOpsAgent, with the following variables
 
     ```
-    acrKey              = <acrKey>          # azure container registry key to login
-    acrName             = <acrName>         # azure container registry name
+    acrKey              = <acrKey>              # azure container registry key to login
+    acrName             = <acrName>             # azure container registry name
     adoUrl              = https://dev.azure.com/<your_org> # Azure DevOps Organization URL
-    agentCount          = 3                 # amount of azure pipeline container instances to be created
-    agentPool           = Self-Hosted       # agent-pool name
-    agentPoolToken      = <agentPoolToken>  # personal acces token for agent pool
-    containerNamePrefix = apa               # container name prefix
-    location            = westeurope        # where your resources will be created
-    resourceGroup       = apa-rg            # where your agents will be placed
-    serviceConnection   = <serviceConnection> # arm service connection name
-    vmImageLinux        = ubuntu-latest     # vm poolimage for linux containers
-    vmImageWindows      = windows-latest    # vm poolimage for linux containers
+    agentCount          = 3                     # amount of container instances to be created
+    agentPool           = Self-Hosted           # agent-pool name
+    agentPoolToken      = <agentPoolToken>      # personal acces token for agent pool
+    containerNamePrefix = apa                   # container name prefix
+    location            = westeurope            # where your resources will be created
+    resourceGroup       = apa-rg                # where your agents will be placed
+    serviceConnection   = <serviceConnection>   # arm service connection name
+    vmImageLinux        = ubuntu-latest         # vm poolimage for buiding linux containers
+    vmImageWindows      = windows-latest        # vm poolimage for building Windows containers
     ```
 
 4. Create a new pipeline using one of the following pipeline.yaml for [Ubuntu](Agents/Docker/Linux/Ubuntu/Pipeline/pipeline.yaml), for [Debian](Agents/Docker/Linux/Debian/Pipeline/pipeline.yaml) or for [Server Core](Agents/Docker/Linux/Debian/Pipeline/pipeline.yaml) and run it.
