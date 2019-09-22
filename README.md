@@ -2,10 +2,10 @@
 ## Overview
 I'll be brief. The following explains how to build, setup and run self-hosted docker agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
 
-1. Build Docker Container Image for self-hosted Azure Pipelines Agent
-2. Push Docker Container Image to Azure Container Registry
-3. Start container as Azure Container Instance
-4. Connect Container to Azure DevOps Agent Pool (Self-Hosted)
+1. Build Docker Container Image for self-hosted Azure Pipelines Agent.
+2. Push Docker Container Image to Azure Container Registry.
+3. Start Docker Container as Azure Container Instance.
+4. Connect Container to Azure DevOps Agent Pool (Self-Hosted).
 
 ## Container Agents
 The docker container are based on the official [Azure Pipelines VM images for Microsoft-hosted CI/CD](https://github.com/microsoft/azure-pipelines-image-generation).
