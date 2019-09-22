@@ -4,7 +4,7 @@
 - Azure CLI (latest)
 - Git (latest)
 - PowerShell Core (latest)
-- .NET SDK
-- Docker
-- Kubectl
-- Terraform
+- .NET SDK (2.1)
+- Docker (18.06).3-ce
+- Kubectl (1.14.4)
+- Terraform (0.12.6)

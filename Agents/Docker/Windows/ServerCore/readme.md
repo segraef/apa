@@ -5,3 +5,9 @@
 - Azure CLI (latest)
 - Git (latest)
 - PowerShell Core (latest)
+
+### in progress
+
+- Docker
+- Kubectl
+- Terraform
