@@ -1,6 +1,6 @@
 # Azure Pipelines Container Agents (Self-Hosted) for Azure DevOps
 ## Overview
-I'll be brief. The following explains how to build, setup and run self-hosted docker agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
+I'll be brief. The following explains how to build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
 
 1. Build Docker Container Image for self-hosted Azure Pipelines Agent.
 2. Push Docker Container Image to Azure Container Registry.
