@@ -54,6 +54,6 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
 ## Helpers
 
-Instead using an Azure Pipeline you can also run also these tasks locally. For that you can find Helpers [here](Agents/Docker/Helpers). If you're not familiar with Docker at all I recommend the [Docker Quickstart](https://docs.docker.com/get-started/).
+Instead using an Azure Pipeline you can also run also these tasks locally. For that you can find Helpers [here](Agents/Docker/Linux/Helpers) (Linux) and [here](Agents/Docker/Windows/Helpers) (Windows). If you're not familiar with Docker at all I recommend the [Docker Quickstart](https://docs.docker.com/get-started/).
 
 
