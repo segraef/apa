@@ -26,14 +26,14 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
 ## Setup
 
-1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) and clone/for [this repo](https://github.com/segraef/apa.git) into it.
+1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) and clone/fork [this repo](https://github.com/segraef/apa.git) into it.
 
 2. Generate a [Personal Access Token (PAT)](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops#create-personal-access-tokens-to-authenticate-access) for your Azure DevOps Organization. When generating the Personal Access Token (PAT), assign the following scopes:
 
 - Agent Pools - Read & Manage
 - Deployment Groups - Read & Manage
 
-3. In pipeline/library add a variable group named vg.DevOpsAgent, with the following variables
+3. In Pipelines/Library add a variable group named vg.DevOpsAgent, with the following variables
 
     ```
     acrKey              = <acrKey>              # azure container registry key to login
