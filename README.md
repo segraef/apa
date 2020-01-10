@@ -13,9 +13,9 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
 | Container Agent | Tools | Build Status |
 |---|---|---|
-| [Ubuntu](Agents/Docker/Linux/Ubuntu) (latest)   | See [here](Agents/Docker/Linux/Ubuntu) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentUbuntu?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)  |
-| [Debian](Agents/Docker/Linux/Debian) (latest)  | See [here](Agents/Docker/Linux/Debian) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentDebian?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
-|  [Server Core](Agents/Docker/Windows/ServerCore) (latest) | See [here](Agents/Docker/Windows/ServerCore) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentServerCore?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
+| [Ubuntu](PipelineAgents/2020-01-09/dockerfile) (latest)   | See [here](#Image-Contents) | [![Build Status](https://dev.azure.com/GeekClub/Public/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Public/_build/latest?definitionId=44&branchName=master) |
+| [Debian](PipelineAgents/2020-01-09/dockerfile) (latest)  | See [here](#Image-Contents) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentDebian?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master) |
+|  [Server Core](PipelineAgents/2020-01-09/dockerfile_Servercore) (latest) | See [here](#Image-Contents) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentServerCore?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master) |
 
 ## Requirements
 
@@ -32,24 +32,24 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 - Agent Pools - Read & Manage
 - Deployment Groups - Read & Manage
 
-3. In Pipelines/Library add a variable group named vg.PipelineAgents, with the following variables
+3. In Pipelines/Library add a variable group named vg.PipelineAgents, with the following variable to avoid exposing keys & secrets in code
 
     ```
-    acrKey              = <acrKey>              # azure container registry key to login
-    acrName             = <acrName>             # azure container registry name
-    adoUrl              = https://dev.azure.com/<your_org> # Azure DevOps Organization URL
-    agentCount          = 3                     # amount of container instances to be created
-    agentPool           = Self-Hosted           # agent-pool name
     agentPoolToken      = <agentPoolToken>      # personal acces token for agent pool
-    containerNamePrefix = apa                   # container name prefix
-    location            = westeurope            # where your resources will be created
-    resourceGroup       = apa-rg                # where your agents will be placed
-    serviceConnection   = <serviceConnection>   # arm service connection name
-    vmImageLinux        = ubuntu-latest         # vm poolimage for buiding linux containers
-    vmImageWindows      = windows-latest        # vm poolimage for building Windows containers
+
     ```
 
-4. Create a new pipeline using one of the following pipeline.yaml for [Ubuntu](Agents/Docker/Linux/Ubuntu/Pipeline/pipeline.yaml), for [Debian](Agents/Docker/Linux/Debian/Pipeline/pipeline.yaml) or for [Server Core](Agents/Docker/Linux/Debian/Pipeline/pipeline.yaml) and run it.
+4. In your parameters.yml adjust following variables
+
+    ```
+    adoUrl              = https://dev.azure.com/<organization>  # Azure DevOps Organization URL
+    agentPool           = <resourceGroup>                       # agent-pool name
+    location            = <resourceGroup>                       # where your resources will be created
+    resourceGroup       = <resourceGroup>                       # where your agents will be placed
+    serviceConnection   = <serviceConnection>                   # arm service connection name
+    ```
+
+4. Create a new pipeline using your [pipeline.yaml](PipelineAgents/2020-01-09/Pipeline/pipeline.yml) for and run it.
 
 ## Helpers
 
