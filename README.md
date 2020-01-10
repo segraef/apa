@@ -31,7 +31,6 @@ I'll be brief. The following explains how to easily build, setup and run self-ho
 
     ```
     agentPoolToken      = <agentPoolToken>      # personal acces token for agent pool
-
     ```
 
 4. In [parameters.yml](PipelineAgents/2020-01-09/Parameters/parameters.yml) adjust following variables
