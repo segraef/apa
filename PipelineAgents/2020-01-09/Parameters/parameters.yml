@@ -4,15 +4,19 @@ variables:
 - name: containerNamePrefix
   value: aci-apa
 - name: imageOS
-  value: ubuntu
-#- name: imageOS
-#  value: debian
-#- name: imageOS
-#  value: servercore
+  value: ubuntu #change it to debian or servercore
 - name: instanceCount
   value: 1
 - name: adoUrl
   value: https://dev.azure.com/GeekClub
 - name: agentPoolName
   value: Self-Hosted
+- name: vmImage
+  value: ubuntu-latest
+- name: location
+  value: West Europe
+- name: resourceGroupName
+  value: ecp-container-rg
+- name: serviceConnection
+  value: Internal
 - group: vg.PipelineAgents
