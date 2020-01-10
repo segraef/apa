@@ -1,4 +1,9 @@
 # Azure Pipelines Container Agents (Self-Hosted) for Azure DevOps
+
+| Pipeline | Build Status |
+|---|---|---|
+| PipelineAgents | [![Build Status](https://dev.azure.com/GeekClub/Public/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Public/_build/latest?definitionId=44&branchName=master) |
+
 ## Overview
 I'll be brief. The following explains how to easily build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
 
@@ -6,16 +11,6 @@ I'll be brief. The following explains how to easily build, setup and run self-ho
 2. Builds Docker Container Image for self-hosted Azure Pipelines Agent within that ACR.
 3. Starts Docker Container as Azure Container Instance (ACI).
 4. Connects Docker Container to your Azure DevOps Agent Pool (Self-Hosted).
-
-## Container Agents
-The docker container are based on the official [Azure Pipelines VM images for Microsoft-hosted CI/CD](https://github.com/microsoft/azure-pipelines-image-generation).
-
-
-| Container Agent | Tools | Build Status |
-|---|---|---|
-| [Ubuntu](PipelineAgents/2020-01-09/dockerfile) (latest)   | See [here](#Image-Contents) | [![Build Status](https://dev.azure.com/GeekClub/Public/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Public/_build/latest?definitionId=44&branchName=master) |
-| [Debian](PipelineAgents/2020-01-09/dockerfile) (latest)  | See [here](#Image-Contents) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentDebian?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master) |
-|  [Server Core](PipelineAgents/2020-01-09/dockerfile_Servercore) (latest) | See [here](#Image-Contents) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentServerCore?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master) |
 
 ## Requirements
 
@@ -39,23 +34,26 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
     ```
 
-4. In your parameters.yml adjust following variables
+4. In [parameters.yml](PipelineAgents/2020-01-09/Parameters/parameters.yml) adjust following variables
 
     ```
     adoUrl              = https://dev.azure.com/<organization>  # Azure DevOps Organization URL
-    agentPool           = <resourceGroup>                       # agent-pool name
-    location            = <resourceGroup>                       # where your resources will be created
-    resourceGroup       = <resourceGroup>                       # where your agents will be placed
+    agentPool           = <agentPool>                           # agent-pool name
+    location            = <location>                            # where your resources will be created
+    resourceGroupName   = <resourceGroupName>                   # where your agents will be placed
     serviceConnection   = <serviceConnection>                   # arm service connection name
     ```
 
-4. Create a new pipeline using your [pipeline.yaml](PipelineAgents/2020-01-09/Pipeline/pipeline.yml) for and run it.
+5. Create a new pipeline using your [pipeline.yaml](PipelineAgents/2020-01-09/Pipeline/pipeline.yml) for and run it.
 
 ## Helpers
 
 Instead using an Azure Pipeline you can also run also these tasks locally. For that you can find Helpers [here](PipelineAgents/2020-01-09/Scripts). If you're not familiar with Docker at all I recommend the [Docker Quickstart](https://docs.docker.com/get-started/).
 
-## Image Contents
+## Docker Container image contents
+
+The docker container images are based on the official [Azure Pipelines VM images for Microsoft-hosted CI/CD](https://github.com/microsoft/azure-pipelines-image-generation).
+
 ### Ubuntu / Debian
 - Azure CLI (latest)
 - Git (latest)
