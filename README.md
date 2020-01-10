@@ -1,7 +1,7 @@
 # Azure Pipelines Container Agents (Self-Hosted) for Azure DevOps
 
 | Pipeline | Build Status |
-|---|---|---|
+|---|---|
 | PipelineAgents | [![Build Status](https://dev.azure.com/GeekClub/Public/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Public/_build/latest?definitionId=44&branchName=master) |
 
 ## Overview
