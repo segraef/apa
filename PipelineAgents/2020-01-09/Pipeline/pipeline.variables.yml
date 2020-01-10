@@ -4,4 +4,4 @@ variables:
 - name: ModuleVersion
   value: 2020-01-09
 - name: modulePath
-  value: Modules/ARM/$(moduleName)/$(moduleVersion)
+  value: $(moduleName)/$(moduleVersion)
