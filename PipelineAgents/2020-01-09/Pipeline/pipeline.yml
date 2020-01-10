@@ -25,7 +25,7 @@ stages:
       vmImage: $(vmImage)
     steps:
       - task: AzureCLI@2
-        enabled: false
+        enabled: true
         displayName: Create ACR and Build Docker Image
         inputs:
           azureSubscription: $(serviceConnection)
