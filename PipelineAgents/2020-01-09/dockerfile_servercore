@@ -1,11 +1,13 @@
 FROM mcr.microsoft.com/windows/servercore:ltsc2019
+
+WORKDIR /azp
+
+COPY .token .
+COPY Scripts/Install-PipelineAgent.ps1 .
+
 RUN @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin \
     choco install azure-cli \
     choco install git \
     choco install powershell-core
-
-WORKDIR /azp
-
-COPY /Agents/Docker/Windows/ServerCore/Install-PipelineAgent.ps1 .
 
 CMD powershell .\Install-PipelineAgent.ps1

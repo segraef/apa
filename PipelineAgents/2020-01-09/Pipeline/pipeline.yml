@@ -1,0 +1,85 @@
+name: $(moduleName)-$(moduleVersion)
+
+variables:
+- template: pipeline.variables.yml
+- template: ../Parameters/parameters.yml
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - dev
+  paths:
+    include:
+    - Modules/ARM/PipelineAgents/*
+    exclude:
+    - Modules/ARM/PipelineAgents/*/readme.md
+
+stages:
+
+- stage: Create
+  jobs:
+  - job: Create
+    displayName: Create Container Registry
+    pool:
+      vmImage: $(vmImage)
+    steps:
+      - task: AzureCLI@2
+        enabled: false
+        displayName: Create ACR and Build Docker Image
+        inputs:
+          azureSubscription: $(serviceConnection)
+          scriptType: 'pscore'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az group create --name $(resourceGroupName) --location "$(location)"
+            az acr create --resource-group $(resourceGroupName) --name $(acrName) --sku Basic --admin-enabled true
+            az acr login --name $(acrName)
+            New-Item "$(modulePath)/.token" -ItemType File -Value "$(agentPoolToken)"
+            az acr build --image "apa_$(imageOS)" --registry $(acrName) --file "$(modulePath)/dockerfile" "$(modulePath)"
+            Remove-Item "$(modulePath)/.token" -Force
+
+- stage: Deploy
+  jobs:
+  - job: 'Deploy'
+    displayName: Deploy Container Instances
+    pool:
+      vmImage: $(vmImage)
+    steps:
+      - task: AzurePowerShell@4
+        displayName: 'Start and connect Pipeline Agents'
+        inputs:
+          azureSubscription: $(serviceConnection)
+          ScriptType: InlineScript
+          azurePowerShellVersion: LatestVersion
+          Inline: |
+            $containers = @()
+            $envVars = @{
+              "AZP_URL"="$(adoUrl)";
+              #"AZP_TOKEN"="$(agentPoolToken)";
+              "AZP_TOKEN_FILE"="/azp/.token";
+              "AZP_POOL"="$(agentPoolName)"
+            }
+            $registry = Get-AzContainerRegistry -ResourceGroupName $(resourceGroupName) -Name $(acrName)
+            $credentials = Get-AzContainerRegistryCredential -Registry $registry
+            $registryCredentials= New-Object System.Management.Automation.PSCredential ("$($registry.Name)", (ConvertTo-SecureString "$($credentials.Password)" -AsPlainText -Force))
+            $image = "$($registry.LoginServer)" + "/" + "apa_" + "$(imageOS)"
+            $osType = if ($(imageOS) -eq "servercore") {"Windows"} else {"Linux"}
+            
+            for ($i=1; $i -le $(instanceCount); $i++) {
+                $containerName = "$(containerNamePrefix)" + "-00$i"
+                Write-Output "Creating container $containerName ..."
+                $envVars["AZP_AGENT_NAME"] = $containerName
+                New-AzContainerGroup `
+                    -ResourceGroupName $(resourceGroupName) `
+                    -Name "$containerName" `
+                    -Image "$image" `
+                    -RegistryCredential $registryCredentials `
+                    -Cpu 1 `
+                    -MemoryInGB 4 `
+                    -OsType $osType `
+                    -RestartPolicy OnFailure `
+                    -EnvironmentVariable $envVars
+                $containers += "$containerName"
+            }
+            Write-Output $containers

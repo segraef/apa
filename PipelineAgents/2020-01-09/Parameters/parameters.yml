@@ -1,0 +1,18 @@
+variables:
+- name: acrName
+  value: acrapa001
+- name: containerNamePrefix
+  value: aci-apa
+- name: imageOS
+  value: ubuntu
+#- name: imageOS
+#  value: debian
+#- name: imageOS
+#  value: servercore
+- name: instanceCount
+  value: 1
+- name: adoUrl
+  value: https://dev.azure.com/GeekClub
+- name: agentPoolName
+  value: Self-Hosted
+- group: vg.PipelineAgents

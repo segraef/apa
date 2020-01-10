@@ -1,17 +1,17 @@
 # Azure Pipelines Container Agents (Self-Hosted) for Azure DevOps
 ## Overview
-I'll be brief. The following explains how to build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
+I'll be brief. The following explains how to easily build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
 
-1. Build Docker Container Image for self-hosted Azure Pipelines Agent.
-2. Push Docker Container Image to Azure Container Registry.
-3. Start Docker Container as Azure Container Instance.
-4. Connect Docker Container to Azure DevOps Agent Pool (Self-Hosted).
+1. Creates an Azure Container Registry (ACR).
+2. Builds Docker Container Image for self-hosted Azure Pipelines Agent within that ACR.
+3. Starts Docker Container as Azure Container Instance (ACI).
+4. Connects Docker Container to your Azure DevOps Agent Pool (Self-Hosted).
 
 ## Container Agents
 The docker container are based on the official [Azure Pipelines VM images for Microsoft-hosted CI/CD](https://github.com/microsoft/azure-pipelines-image-generation).
 
 
-| Container Agent | Tools |Build Status  |
+| Container Agent | Tools | Build Status |
 |---|---|---|
 | [Ubuntu](Agents/Docker/Linux/Ubuntu) (latest)   | See [here](Agents/Docker/Linux/Ubuntu) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentUbuntu?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)  |
 | [Debian](Agents/Docker/Linux/Debian) (latest)  | See [here](Agents/Docker/Linux/Debian) |[![Build Status](https://dev.azure.com/GeekClub/Azure/_apis/build/status/Agents/DevOpsAgentDebian?branchName=master)](https://dev.azure.com/GeekClub/Azure/_build/latest?definitionId=28&branchName=master)   |
@@ -19,21 +19,20 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 
 ## Requirements
 
-- Azure Container Registry
-- Azure DevOps Project
-- Azure DevOps preview feature [multi-stage pipelines](https://docs.microsoft.com/en-us/azure/devops/project/navigation/preview-features?view=azure-devops)
-- Azure Resource Manager Service Connection
+- Azure [DevOps Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops&tabs=preview-page)
+- Azure DevOps preview feature [multi-stage pipelines](https://docs.microsoft.com/en-us/azure/devops/project/navigation/preview-features?view=azure-devops) enabeld 
+- Azure Resource Manager [Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
 
 ## Setup
 
 1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) and clone/fork [this repo](https://github.com/segraef/apa.git) into it.
 
-2. Generate a [Personal Access Token (PAT)](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops#create-personal-access-tokens-to-authenticate-access) for your Azure DevOps Organization. When generating the Personal Access Token (PAT), assign the following scopes:
+2. Generate a [Personal Access Token (PAT)](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops#create-personal-access-tokens-to-authenticate-access) for your Azure DevOps Organization. When generating the (PAT), assign the following scopes:
 
 - Agent Pools - Read & Manage
 - Deployment Groups - Read & Manage
 
-3. In Pipelines/Library add a variable group named vg.DevOpsAgent, with the following variables
+3. In Pipelines/Library add a variable group named vg.PipelineAgents, with the following variables
 
     ```
     acrKey              = <acrKey>              # azure container registry key to login
@@ -55,5 +54,25 @@ The docker container are based on the official [Azure Pipelines VM images for Mi
 ## Helpers
 
 Instead using an Azure Pipeline you can also run also these tasks locally. For that you can find Helpers [here](Agents/Docker/Linux/Helpers) (Linux) and [here](Agents/Docker/Windows/Helpers) (Windows). If you're not familiar with Docker at all I recommend the [Docker Quickstart](https://docs.docker.com/get-started/).
+
+## Image Contents
+### Ubuntu / Debian
+- Azure CLI (latest)
+- Git (latest)
+- PowerShell Core (latest)
+- .NET SDK (2.1)
+- Docker (18.06).3-ce
+- Kubectl (1.14.4)
+- Terraform (0.12.6)
+
+### Windows Server Core (ltsc2019)
+
+- Chocolatey (latest)
+- Azure CLI (latest)
+- Git (latest)
+- PowerShell Core (latest)
+- Docker (in porgress)
+- Kubectl (in porgress)
+- Terraform (in porgress)
 
 
