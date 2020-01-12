@@ -11,9 +11,9 @@ trigger:
       - dev
   paths:
     include:
-    - Modules/ARM/PipelineAgents/*
+    - PipelineAgents/*
     exclude:
-    - Modules/ARM/PipelineAgents/*/readme.md
+    - PipelineAgents/*/readme.md
 
 stages:
 

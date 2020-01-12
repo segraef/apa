@@ -1,6 +1,7 @@
 # Docker Cheat Sheet
 ## Remove all images
 ```
+docker system prune -a
 docker rmi $(docker images -a -q)
 ```
 

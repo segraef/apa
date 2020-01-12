@@ -8,8 +8,8 @@
 The following explains how to easily build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
 
 1. Creates an Azure Container Registry (ACR).
-2. Builds Docker Container Image for self-hosted Azure Pipelines Agent within the ACR.
-3. Starts Docker Container as Azure Container Instance (ACI).
+2. Builds Docker Container Image for self-hosted Azure Pipelines Agent within that ACR.
+3. Starts Docker Container as Azure Container Instances (ACI).
 4. Connects ACIs to your Azure DevOps Agent Pool (Self-Hosted).
 
 ## Requirements
