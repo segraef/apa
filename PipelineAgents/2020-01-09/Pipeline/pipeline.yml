@@ -64,7 +64,7 @@ stages:
             $credentials = Get-AzContainerRegistryCredential -Registry $registry
             $registryCredentials= New-Object System.Management.Automation.PSCredential ("$($registry.Name)", (ConvertTo-SecureString "$($credentials.Password)" -AsPlainText -Force))
             $image = "$($registry.LoginServer)" + "/" + "apa_" + "$(imageOS)"
-            $osType = if ($(imageOS) -eq "servercore") {"Windows"} else {"Linux"}
+            $osType = if ("$(imageOS)" -eq "servercore") {"Windows"} else {"Linux"}
             
             for ($i=1; $i -le $(instanceCount); $i++) {
                 $containerName = "$(containerNamePrefix)" + "-00$i"
