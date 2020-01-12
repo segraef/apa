@@ -5,12 +5,12 @@
 | PipelineAgents | [![Build Status](https://dev.azure.com/GeekClub/Public/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Public/_build/latest?definitionId=44&branchName=master) |
 
 ## Overview
-I'll be brief. The following explains how to easily build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
+The following explains how to easily build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
 
 1. Creates an Azure Container Registry (ACR).
-2. Builds Docker Container Image for self-hosted Azure Pipelines Agent within that ACR.
+2. Builds Docker Container Image for self-hosted Azure Pipelines Agent within the ACR.
 3. Starts Docker Container as Azure Container Instance (ACI).
-4. Connects Docker Container to your Azure DevOps Agent Pool (Self-Hosted).
+4. Connects ACIs to your Azure DevOps Agent Pool (Self-Hosted).
 
 ## Requirements
 
@@ -20,20 +20,22 @@ I'll be brief. The following explains how to easily build, setup and run self-ho
 
 ## Setup
 
-1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) and clone/fork [this repo](https://github.com/segraef/apa.git) into it.
+1. Create an [Azure DevOps Agent pool](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops#creating-agent-pools) within your Azure DevOps organization.
 
 2. Generate a [Personal Access Token (PAT)](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops#create-personal-access-tokens-to-authenticate-access) for your Azure DevOps Organization. When generating the (PAT), assign the following scopes:
 
-- Agent Pools - Read & Manage
-- Deployment Groups - Read & Manage
+   - Agent Pools - Read & Manage
+   - Deployment Groups - Read & Manage
 
-3. In Pipelines/Library add a variable group named vg.PipelineAgents, with the following variable to avoid exposing keys & secrets in code
+3. Create a new repository and clone/fork [this repo](https://github.com/segraef/apa.git) into it.
+
+4. In Pipelines/Library add a [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml) named vg.PipelineAgents, with the following variable to avoid exposing keys & secrets in code
 
     ```
     agentPoolToken      = <agentPoolToken>      # personal acces token for agent pool
     ```
 
-4. In [parameters.yml](PipelineAgents/2020-01-09/Parameters/parameters.yml) adjust following variables
+5. In [parameters.yml](PipelineAgents/2020-01-09/Parameters/parameters.yml) adjust following variables
 
     ```
     adoUrl              = https://dev.azure.com/<organization>  # Azure DevOps Organization URL
@@ -43,11 +45,11 @@ I'll be brief. The following explains how to easily build, setup and run self-ho
     serviceConnection   = <serviceConnection>                   # arm service connection name
     ```
 
-5. Create a new pipeline using your [pipeline.yaml](PipelineAgents/2020-01-09/Pipeline/pipeline.yml) for and run it.
+5. Create a new pipeline using the [pipeline.yaml](PipelineAgents/2020-01-09/Pipeline/pipeline.yml) and run it.
 
 ## Helpers
 
-Instead using an Azure Pipeline you can also run also these tasks locally. For that you can find Helpers [here](PipelineAgents/2020-01-09/Scripts). If you're not familiar with Docker at all I recommend the [Docker Quickstart](https://docs.docker.com/get-started/).
+Instead using an Azure Pipeline you can also run also these tasks locally using your local machine as agent. For that you can find a Helper file [here](PipelineAgents/2020-01-09/Scripts/New-PipelieAgents.ps1). If you're not familiar with Docker at all I recommend the [Docker Quickstart](https://docs.docker.com/get-started/).
 
 ## Docker Container image contents
 
