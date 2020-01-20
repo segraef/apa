@@ -2,7 +2,7 @@
 
 | Pipeline | Build Status |
 |---|---|
-| PipelineAgents | [![Build Status](https://dev.azure.com/GeekClub/Public/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Public/_build/latest?definitionId=44&branchName=master) |
+| PipelineAgents | [![Build Status](https://dev.azure.com/GeekClub/Azure%20(Public)/_apis/build/status/PipelineAgents?branchName=master)](https://dev.azure.com/GeekClub/Azure%20(Public)/_build/latest?definitionId=44&branchName=master) |
 
 ## Overview
 The following explains how to easily build, setup and run self-hosted docker container agents using Azure Pipelines in Azure DevOps (ADO). The pipeline does the following for you:
