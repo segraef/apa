@@ -16,7 +16,7 @@ variables:
 - name: location
   value: West Europe
 - name: resourceGroupName
-  value: ecp-container-rg
+  value: rg-weu-x-apa
 - name: serviceConnection
   value: Internal
 - group: vg.PipelineAgents
