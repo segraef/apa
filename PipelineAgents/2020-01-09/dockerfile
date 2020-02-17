@@ -7,6 +7,10 @@ COPY Scripts/start.sh .
 
 RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
+# Add Docker CE repository
+RUN sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+
 RUN apt-get update \
     && apt-get install apt-utils -qq
 
@@ -32,9 +36,7 @@ RUN apt-get install -qq --no-install-recommends \
 && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 # Install Docker
-ENV DOCKER_VERSION 18.06.3-ce
-RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz \
-    && tar --strip-components=1 -xvzf docker-$DOCKER_VERSION.tgz -C /usr/local/bin && rm docker-$DOCKER_VERSION.tgz
+RUN apt-get install docker-ce docker-ce-cli containerd.io
 
 # Install Kubectl
 ENV KUBE_VERSION 1.14.8
