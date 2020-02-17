@@ -38,6 +38,7 @@ The following explains how to easily build, setup and run self-hosted docker con
 5. In [parameters.yml](PipelineAgents/2020-01-09/Parameters/parameters.yml) adjust following variables
 
     ```
+    acrName             = <acrName>                             # Container Registry Name (must be unique)
     adoUrl              = https://dev.azure.com/<organization>  # Azure DevOps Organization URL
     agentPool           = <agentPool>                           # agent-pool name
     location            = <location>                            # where your resources will be created
