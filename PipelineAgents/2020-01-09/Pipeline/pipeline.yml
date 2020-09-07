@@ -36,7 +36,7 @@ stages:
             az acr create --resource-group $(resourceGroupName) --name $(acrName) --sku Basic --admin-enabled true
             az acr login --name $(acrName)
             New-Item "$(modulePath)/.token" -ItemType File -Value "$(agentPoolToken)"
-            az acr build --image "apa_$(imageOS)" --registry $(acrName) --file "$(modulePath)/dockerfile" "$(modulePath)"
+            az acr build --image "apa_$(imageOS)" --registry $(acrName) --file "$(modulePath)/dockerfile" "$(modulePath)" #--platform windows
             Remove-Item "$(modulePath)/.token" -Force
 
 - stage: Deploy
