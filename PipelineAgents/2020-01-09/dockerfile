@@ -29,7 +29,7 @@ RUN apt-get install -qq --no-install-recommends \
     unzip \
     wget \
     zip \
-&& rm -rf /var/lib/apt/lists/* && apt-get clean
+    && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 # Install Docker
 ENV DOCKER_VERSION 18.06.3-ce
@@ -49,14 +49,27 @@ RUN curl -fsSLO https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terr
 
 # Accept the TEE EULA
 RUN mkdir -p "/root/.microsoft/Team Foundation/4.0/Configuration/TEE-Mementos" \
- && cd "/root/.microsoft/Team Foundation/4.0/Configuration/TEE-Mementos" \
- && echo '<ProductIdData><eula-14.0 value="true"/></ProductIdData>' > "com.microsoft.tfs.client.productid.xml"
+    && cd "/root/.microsoft/Team Foundation/4.0/Configuration/TEE-Mementos" \
+    && echo '<ProductIdData><eula-14.0 value="true"/></ProductIdData>' > "com.microsoft.tfs.client.productid.xml"
+
+ENV DEBIAN_FRONTEND noninteractive 
+# Install add-apt-repository
+RUN apt-get update \
+    && apt-get install -y software-properties-common
 
 # Install PowerShell Core
-RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb \
+RUN apt-get update \
+    # Download the Microsoft repository GPG keys
+    && wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb \
+    # Register the Microsoft repository GPG keys
     && dpkg -i packages-microsoft-prod.deb \
+    # Update the list of products
     && apt-get update \
-    && apt-get install -y powershell \
+    # Enable the "universe" repositories
+    && add-apt-repository universe \
+    # Install PowerShell
+    && apt-get install -y powershell \ 
+    # Install Powershell Modules
     && pwsh -Command "Install-Module -Name Az -Force" \
     && pwsh -Command "Install-Module -Name Pester -Force" \
     && pwsh -Command "Install-Module -Name Az.ResourceGraph -Force"
