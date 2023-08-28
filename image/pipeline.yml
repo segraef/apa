@@ -19,11 +19,15 @@ parameters:
   - name: resourceGroup
     displayName: Resource group
     type: string
-    default: <>
+    default: ''
+  - name: location
+    displayName: Location
+    type: string
+    default: ''
   - name: ImageType
     displayName: Image type
     type: string
-    default: plan
+    default: UbuntuMinimal
     values:
       - UbuntuMinimal
       - Ubuntu2004
@@ -49,16 +53,26 @@ stages:
               exit
 
         - task: AzureCLI@2
-          displayName: Create Image from VHD (AzureCLI)
+          displayName: Genrate VHD-Image (AzureCLI)
           enabled: true
           inputs:
             azureSubscription: '${{ variables.AzureServiceConnection }}'
             scriptType: 'pscore'
             scriptLocation: 'inlineScript'
             inlineScript: |
+              Import-Module .\virtual-environments\helpers\GenerateResourcesAndImage.ps1
+              $result = GenerateResourcesAndImage `
+                -SubscriptionId ${{ parameters.SubscriptionId }} `
+                -ResourceGroupName ${{ parameters.resourceGroup }} `
+                -ImageType ${{ parameters.imageType }} `
+                -AzureLocation ${{ parameters.location }} `
+              $resultObject = $result | ConvertFrom-Json
+              $OSDiskUri = $resultObject.OSDiskUri
+              $OSDiskUri
+              Write-Host "##vso[task.setvariable variable=OSDiskUri;]$OSDiskUri"
 
         - task: AzurePowerShell@5
-          displayName: Create new VHD (AzurePowerShell)
+          displayName: Genrate VHD-Image (AzurePowerShell)
           enabled: false
           env:
             AZURE_CLIENT_SECRET: $(AzureClientSecret)
@@ -71,15 +85,12 @@ stages:
               Import-Module .\virtual-environments\helpers\GenerateResourcesAndImage.ps1
               $result = GenerateResourcesAndImage `
                 -SubscriptionId ${{ parameters.SubscriptionId }} `
-                -ResourceGroupName $(ResourceGroupName) `
-                -StorageAccountName $(StorageAccountName) `
-                -ImageGenerationRepositoryRoot "$(Build.SourcesDirectory)/virtual-environments" `
-                -ImageType Ubuntu2004 `
-                -AzureLocation "West Europe" `
+                -ResourceGroupName ${{ parameters.resourceGroup }} `
+                -ImageType ${{ parameters.imageType }} `
+                -AzureLocation ${{ parameters.location }} `
                 -AzureTenantId ${env:AZURE_TENANT_ID} `
                 -AzureClientId ${env:AZURE_CLIENT_ID} `
                 -AzureClientSecret ${env:AZURE_CLIENT_SECRET} `
-              -RestrictToAgentIpAddress
               $resultObject = $result | ConvertFrom-Json
               $OSDiskUri = $resultObject.OSDiskUri
               $OSDiskUri
@@ -162,6 +173,7 @@ stages:
 
         - task: AzureCLI@2
           displayName: Update Scale set with new image
+          enabled: false
           inputs:
             azureSubscription: '${{ variables.serviceConnection }}'
             scriptType: 'pscore'
