@@ -1,12 +1,5 @@
 trigger: none
 
-schedules:
-- cron: "0 0 1 * *"
-  displayName: Monthly run
-  branches:
-    include:
-    - main
-
 pool:
   image: ubuntu-latest
 
@@ -15,8 +8,20 @@ variables:
   SubscriptionId: ""
 
 parameters:
+  - name: subscriptionId
+    displayName: Subscription ID
+    type: string
+    default: ''
+  - name: serviceConnection
+    displayName: Service connection
+    type: string
+    default: <>
+  - name: resourceGroup
+    displayName: Resource group
+    type: string
+    default: <>
   - name: ImageType
-    displayName: ImageType
+    displayName: Image type
     type: string
     default: plan
     values:
@@ -26,20 +31,16 @@ parameters:
       - Windows2019
 
 stages:
-- stage: 'RefreshImage'
-  displayName: 'Refresh Image'
-
-  variables:
-    ScriptFolderPath: '$(Build.SourcesDirectory)/AzureDevOpsAgents/scripts/'
-
+- stage: CreateImage
+  displayName: Create Image
   jobs:
-    - job: RefreshImageOnAzureDevOpsAgents
+    - job: CreateImage
       timeoutInMinutes: 0
-      displayName: Refresh Image On Azure DevOps Agents
+      displayName: Create Image
 
       steps:
         - task: CmdLine@2
-          displayName: 'Clone virtual-environments'
+          displayName: Clone actions/virtual-environments
           inputs:
             script: |
               echo 'Cloning into sources folder at: $(Build.SourcesDirectory)'
@@ -47,22 +48,46 @@ stages:
               ls -l
               exit
 
+        - task: AzureCLI@2
+          displayName: Create Image from VHD (AzureCLI)
+          enabled: true
+          inputs:
+            azureSubscription: '${{ variables.AzureServiceConnection }}'
+            scriptType: 'pscore'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+
         - task: AzurePowerShell@5
-          displayName: Create new VHD
+          displayName: Create new VHD (AzurePowerShell)
+          enabled: false
           env:
             AZURE_CLIENT_SECRET: $(AzureClientSecret)
           inputs:
             azureSubscription: '${{ variables.AzureServiceConnection }}'
             ScriptType: 'InlineScript'
-            Inline: |
-              Import-Module .\virtual-environments\helpers\GenerateResourcesAndImage.ps1
-
-              GenerateResourcesAndImage -SubscriptionId ${{ variables.SubscriptionId }} -ResourceGroupName $(ResourceGroupName) -StorageAccountName $(StorageAccountName) -ImageGenerationRepositoryRoot "$(Build.SourcesDirectory)/virtual-environments" -ImageType Ubuntu2004 -AzureLocation "West Europe" -AzureTenantId ${env:AZURE_TENANT_ID} -AzureClientId ${env:AZURE_CLIENT_ID} -AzureClientSecret ${env:AZURE_CLIENT_SECRET} -RestrictToAgentIpAddress
             azurePowerShellVersion: 'LatestVersion'
             pwsh: true
+            Inline: |
+              Import-Module .\virtual-environments\helpers\GenerateResourcesAndImage.ps1
+              $result = GenerateResourcesAndImage `
+                -SubscriptionId ${{ parameters.SubscriptionId }} `
+                -ResourceGroupName $(ResourceGroupName) `
+                -StorageAccountName $(StorageAccountName) `
+                -ImageGenerationRepositoryRoot "$(Build.SourcesDirectory)/virtual-environments" `
+                -ImageType Ubuntu2004 `
+                -AzureLocation "West Europe" `
+                -AzureTenantId ${env:AZURE_TENANT_ID} `
+                -AzureClientId ${env:AZURE_CLIENT_ID} `
+                -AzureClientSecret ${env:AZURE_CLIENT_SECRET} `
+              -RestrictToAgentIpAddress
+              $resultObject = $result | ConvertFrom-Json
+              $OSDiskUri = $resultObject.OSDiskUri
+              $OSDiskUri
+              Write-Host "##vso[task.setvariable variable=OSDiskUri;]$OSDiskUri"
 
         - task: AzureCLI@2
-          displayName: Create Image from VHD
+          displayName: Create image from VHD
+          enabled: false
           inputs:
             azureSubscription: '${{ variables.AzureServiceConnection }}'
             scriptType: 'pscore'
@@ -93,17 +118,34 @@ stages:
               Write-Host "##vso[task.setvariable variable=ImageId;]$imageId"
 
         - task: AzureCLI@2
-          displayName: Create scale set
+          displayName: Create Image from VHD
+          enabled: true
           inputs:
-            azureSubscription: '${{ variables.AzureServiceConnection }}'
+            azureSubscription: '${{ parameters.serviceConnection }}'
             scriptType: 'pscore'
             scriptLocation: 'inlineScript'
             inlineScript: |
-              az image create -g <your-resource-group> -n <name> --os-type Linux --source <url-to-vhd-in-blob>
+              $result = az image create \
+              -g ${{ parameters.serviceConnection }}
+              \-n <name> --os-type Linux \
+              --source $(OSDiskUri)
+
+              $resultObject = $result | ConvertFrom-Json
+              $imageId = $resultObject.id
+              $imageId
+              Write-Host "##vso[task.setvariable variable=ImageId;]$imageId"
+
+        - task: AzureCLI@2
+          displayName: Create scale set
+          inputs:
+            azureSubscription: '${{ parameters.serviceConnection }}'
+            scriptType: 'pscore'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
               az vmss create \
-                --name releaseagents-1-Ubuntu1804 \
-                --resource-group release-agents \
-                --image ReleaseAgentImage-Ubuntu1804 \
+                --name "apa-${{ parameters.imageType }}" \
+                --resource-group ${{ parameters.resourceGroup }} \
+                --image $(imageID) \
                 --vm-sku Standard_D2_v3 \
                 --storage-sku StandardSSD_LRS \
                 --authentication-type SSH \
@@ -112,18 +154,21 @@ stages:
                 --upgrade-policy-mode manual \
                 --single-placement-group false \
                 --platform-fault-domain-count 1 \
-                --load-balancer “” \
-                --vnet-name vnet-release-agents \
+                --load-balancer '' \
+                --vnet-name apa-vnet \
                 --vnet-address-prefix 10.1.1.0/24 \
                 --subnet snet-release-agents \
                 --subnet-address-prefix 10.1.1.0/24
 
         - task: AzureCLI@2
-          displayName: Update Scale set to use new image
+          displayName: Update Scale set with new image
           inputs:
-            azureSubscription: '${{ variables.AzureServiceConnection }}'
+            azureSubscription: '${{ variables.serviceConnection }}'
             scriptType: 'pscore'
             scriptLocation: 'inlineScript'
             inlineScript: |
-              Write-Host "Image Id: " $(ImageId)
-              az vmss update --resource-group <resource-group-name> --name <scale-set-name> --set virtualMachineProfile.storageProfile.imageReference.id=$(ImageId)
+              Write-Output "Image Id: " $(ImageId)
+              az vmss update \
+                --resource-group ${{ variables.resourceGroup }} \
+                --name "apa-${{ parameters.imageType }}" \
+                --set virtualMachineProfile.storageProfile.imageReference.id=$(ImageId)
