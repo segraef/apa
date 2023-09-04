@@ -60,6 +60,7 @@ stages:
             scriptType: 'pscore'
             scriptLocation: 'inlineScript'
             inlineScript: |
+              (Invoke-RestMethod http://ipinfo.io/json).ip
               Import-Module .\virtual-environments\helpers\GenerateResourcesAndImage.ps1
               $result = GenerateResourcesAndImage `
                 -SubscriptionId ${{ parameters.SubscriptionId }} `
@@ -82,6 +83,7 @@ stages:
             azurePowerShellVersion: 'LatestVersion'
             pwsh: true
             Inline: |
+              (Invoke-RestMethod http://ipinfo.io/json).ip
               Import-Module .\virtual-environments\helpers\GenerateResourcesAndImage.ps1
               $result = GenerateResourcesAndImage `
                 -SubscriptionId ${{ parameters.SubscriptionId }} `
